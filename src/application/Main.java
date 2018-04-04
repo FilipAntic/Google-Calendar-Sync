@@ -5,19 +5,22 @@ import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -28,6 +31,7 @@ public class Main extends Application {
 	private int currentPosition = 4;
 	private ArrayList<VBox> dates = new ArrayList<>();
 	private GridPane root = new GridPane();
+	private BorderPane pane = new BorderPane();
 	private Scene scene;
 
 	@Override
@@ -52,13 +56,35 @@ public class Main extends Application {
 	 * @param stage
 	 * @return
 	 */
-	public GridPane mainScene(Stage stage) {
+	public BorderPane mainScene(Stage stage) {
 		GridPane root2 = new GridPane();
 
 		root.setVgap(10);
 		root.setHgap(10);
-		root.setAlignment(Pos.CENTER);
+		// root.setAlignment(Pos.CENTER);
+		root.setPadding(new Insets(10, 20, 10, 20)); // margins around the whole
+														// grid
 
+		MenuBar menuBar = new MenuBar();
+		Menu menuFile = new Menu("File");
+		Menu menuHelp = new Menu("Help");
+		MenuItem chooseCSV = new MenuItem("Chose CSV pdf file");
+		MenuItem chooseDateFile = new MenuItem("Choose Date file");
+		MenuItem openMetaSchema = new MenuItem("Open meta schema");
+		openMetaSchema.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		menuFile.getItems().addAll(chooseCSV, chooseDateFile);
+		menuHelp.getItems().add(openMetaSchema);
+		menuBar.getMenus().addAll(menuFile, menuHelp);
+
+		Label enterGroupLabel = new Label("Enter your group name");
+		TextField enterGroupField = new TextField();
 		Label chooseFileLabel = new Label("Please choose your schedule file");
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open Resource File");
@@ -66,14 +92,19 @@ public class Main extends Application {
 		chooseFileButton.setOnAction(actions.chooseFile());
 		Label choosedFileLabel = new Label("Your choosed file is :");
 		Text choosedFileText = new Text("File");
-
+		// root.add(menuBar);
+		// root.getChildren().addAll(menuBar);
+		root.add(enterGroupLabel, 1, 0);
+		root.add(enterGroupField, 1, 1);
 		root.add(chooseFileLabel, 0, 0);
 		root.add(chooseFileButton, 0, 1);
 		root.add(choosedFileLabel, 0, 2);
 		root.add(choosedFileText, 1, 2);
+		root.setMinHeight(550);
 		ScrollPane sp = new ScrollPane(root);
-		root2.add(sp, 0, 1);
-		root2.setHgrow(sp, Priority.ALWAYS);
+		sp.setFitToHeight(true);
+		// sp.setFitToWidth(true);
+		sp.setMinHeight(550);
 		// root.add(b, 1, 3);
 		// root.add(vbox, 0, 4);
 		Button addButton = new Button("Add new date");
@@ -92,9 +123,10 @@ public class Main extends Application {
 
 			}
 		});
-
+		pane.setTop(menuBar);
+		pane.setCenter(sp);
 		// root.getChildren().remove(5);
-		return root2;
+		return pane;
 	}
 
 	public VBox pickUpDate() {
